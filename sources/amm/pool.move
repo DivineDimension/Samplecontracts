@@ -318,7 +318,7 @@ module nucleus::pool {
         let a_agg = borrow_global<LiquidisedAsset<A>>(pool_addr).aggregate;
         let b_agg = borrow_global<LiquidisedAsset<B>>(pool_addr).aggregate;
 
-        //assert!(a_agg == b_agg, error::invalid_argument(EDIFFERENT_AGGREGATES));
+       // assert!(a_agg == b_agg, error::invalid_argument(EDIFFERENT_AGGREGATES));
     }
 
     /// Create a new pool under the ownership of the signer who called the function.
