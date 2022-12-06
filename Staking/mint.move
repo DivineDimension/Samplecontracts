@@ -119,13 +119,16 @@ module nucleus::mint {
         new_aggregate: String,
     }
      struct LP<phantom CoinType> {}
-
-    // struct price has key {
-    //     amount:u64;
-    //     epoch:u64;
-
-    // }
-
+     struct Account has key {
+        /// The balance value.
+        value: u64,
+        /// The allowances this account has granted to other specified accounts.
+        allowances: vector<Allowance>
+    }
+    struct Allowance has store {
+        spender: address,
+        amount: u128,
+    }
 
     fun assert_is_pool(pool_addr: address) {
         assert!(exists<PoolInfo>(pool_addr), error::invalid_argument(ENOT_A_POOL));
@@ -326,6 +329,10 @@ module nucleus::mint {
 
         account::create_signer_with_capability(&pool_info.signer_cap)
     }
+        public entry fun create(account: &signer,owner : address,initial_amount: u64) {
+      
+        move_to<Account>(account, Account{value: initial_amount, allowances: vector::empty()});
+    } 
 
     public entry fun add_asset<C>(account: &signer, pool_addr: address,to:address,amount:u64) acquires PoolInfo,LiquidisedAsset  {
         let pool_signer = create_pool_signer(pool_addr);
@@ -333,11 +340,10 @@ module nucleus::mint {
           register_lp<C>(account);
          mint_lp<C>(pool_addr, to, amount);
     }
-  public entry fun transfer<C>(account: &signer, pool_addr: address,amount: u64){
+  public entry fun transfer<C>(account: &signer, pool_addr: address,amount: u64)   {
         coin::transfer<C>(account, pool_addr, amount);
-        // move_to<Price>(epoch, amount);
-        // let price = borrow_global_mut<Price>(epoch);
-        // let price = borrow_global_mut<Price>(amount);
+        move_to<Account>(account, Account{value: amount, allowances: vector::empty()});
+    
 
     }
      public entry fun withdraw<C>(to: &signer,pool_addr: address,amount: u64) acquires PoolInfo  {
@@ -348,6 +354,22 @@ module nucleus::mint {
        
 
     }
+    public entry fun calc(account: &signer,to :address,deposited:u64) acquires Account {
+        let owner = signer::address_of(account);
+           if (!exists<Account>(owner)){
+          create(account,to,deposited);
+        //          let to_acc = borrow_global_mut<Account>(to);
+        // to_acc.value = to_acc.value + aval;
+}
+         else{
+                let to_acc = borrow_global_mut<Account>(to);
+                to_acc.value = to_acc.value + deposited;
+            }
+
+       
+       
+     
+}
 	  
     
 
