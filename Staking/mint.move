@@ -1,5 +1,5 @@
-module nucleus::mint {
-          use aptos_framework::account;
+module nucleus::str1 {
+    use aptos_framework::account;
     use aptos_framework::coin::{Self, MintCapability, FreezeCapability, BurnCapability};
     use aptos_framework::event;
     use aptos_framework::event::EventHandle;
@@ -123,11 +123,13 @@ module nucleus::mint {
         /// The balance value.
         value: u64,
         /// The allowances this account has granted to other specified accounts.
-        allowances: vector<Allowance>
+        depositedtiming: u128,
+    
+      
     }
     struct Allowance has store {
         spender: address,
-        amount: u128,
+        amount: u64,
     }
 
     fun assert_is_pool(pool_addr: address) {
@@ -331,7 +333,7 @@ module nucleus::mint {
     }
         public entry fun create(account: &signer,owner : address,initial_amount: u64) {
       
-        move_to<Account>(account, Account{value: initial_amount, allowances: vector::empty()});
+        // move_to<Account>(account, Account{value: initial_amount, allowances: vector::empty()});
     } 
 
     public entry fun add_asset<C>(account: &signer, pool_addr: address,to:address,amount:u64) acquires PoolInfo,LiquidisedAsset  {
@@ -340,36 +342,55 @@ module nucleus::mint {
           register_lp<C>(account);
          mint_lp<C>(pool_addr, to, amount);
     }
-  public entry fun transfer<C>(account: &signer, pool_addr: address,amount: u64)   {
+//   public entry fun transfer<C>(account: &signer,to :address,deposited: u64) {
+//         coin::transfer<C>(account, pool_addr,deposited );
+//          let owner = signer::address_of(account);
+//          if (!exists<Account>(owner)){
+//           create(account,to,deposited);
+     
+// }
+//          else{
+//                 let to_acc = borrow_global_mut<Account>(to);
+//                 to_acc.value = to_acc.value + deposited;
+//             }
+//     //  move_to<Account>(account, Account{value: initial_amount, allowances: vector::empty()});
+    
+
+//     }
+      public entry fun transfer<C>(account: &signer, pool_addr: address,amount: u64,epoch:u128)  acquires Account {
         coin::transfer<C>(account, pool_addr, amount);
-        move_to<Account>(account, Account{value: amount, allowances: vector::empty()});
+           let owner = signer::address_of(account);
+           if (!exists<Account>(owner)){
+        move_to<Account>(account, Account{value: amount, depositedtiming:epoch});
     
 
     }
-     public entry fun withdraw<C>(to: &signer,pool_addr: address,amount: u64) acquires PoolInfo  {
-     let pool = borrow_global<PoolInfo>(pool_addr);
-        let pool_signer = account::create_signer_with_capability(&pool.signer_cap);
-        let addr = signer::address_of(to);
-        coin::transfer<C>(&pool_signer,addr,amount);
-       
-
-    }
-    public entry fun calc(account: &signer,to :address,deposited:u64) acquires Account {
-        let owner = signer::address_of(account);
-           if (!exists<Account>(owner)){
-          create(account,to,deposited);
-        //          let to_acc = borrow_global_mut<Account>(to);
-        // to_acc.value = to_acc.value + aval;
-}
-         else{
-                let to_acc = borrow_global_mut<Account>(to);
-                to_acc.value = to_acc.value + deposited;
+        else{
+                let to_acc = borrow_global_mut<Account>(owner);
+                to_acc.value = to_acc.value + amount;
+                to_acc.depositedtiming =  epoch;
             }
 
        
        
      
 }
+	 
+     public entry fun withdraw<C>(account: &signer,pool_addr: address,amount: u64) acquires PoolInfo,Account  {
+     let pool = borrow_global<PoolInfo>(pool_addr);
+        let pool_signer = account::create_signer_with_capability(&pool.signer_cap);
+        let addr = signer::address_of(account);
+        coin::transfer<C>(&pool_signer,addr,amount);
+            let owner = signer::address_of(account);
+          let to_acc = borrow_global_mut<Account>(owner);
+          to_acc.value = to_acc.value - amount;
+          to_acc.depositedtiming=0;
+     
+        
+       
+
+    }
+
 	  
     
 
