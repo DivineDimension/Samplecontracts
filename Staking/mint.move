@@ -1,6 +1,6 @@
-module nucleus::str1 {
+module nucleus::staking {
     use aptos_framework::account;
-    use aptos_framework::coin::{Self, MintCapability, FreezeCapability, BurnCapability};
+    use aptos_framework::coin::{Self, MintCapability, FreezeCapability, BurnCapability,is_account_registered};
     use aptos_framework::event;
     use aptos_framework::event::EventHandle;
     use aptos_std::table; 
@@ -12,6 +12,9 @@ module nucleus::str1 {
     use std::vector;
     use std::error;
     use std::debug;
+     use std::string::utf8;
+    //  use aptos_framework::coin::{Self,is_account_registered};
+
 
     
     const MAX_U64: u128 = 18446744073709551615;
@@ -19,6 +22,7 @@ module nucleus::str1 {
       const ENOT_A_POOL: u64 = 0x0000; 
        const EOWNER_ONLY: u64 = 0x0010;
          const ETOKEN_ALREADY_EXISTS: u64 = 0x0002;
+           const WITHDRAW_MORE_TOKENS: u64 = 0x0003;
 
         struct PoolInfo has key {
         active: bool,
@@ -123,9 +127,16 @@ module nucleus::str1 {
         /// The balance value.
         value: u64,
         /// The allowances this account has granted to other specified accounts.
-        depositedtiming: u128,
+        depositedtiming: u64,
+     
     
       
+    }
+    struct Deposited has key{
+        depositedamount: u64,
+    }
+      struct Claim<phantom CoinType> has key{
+        claimamount: u64,
     }
     struct Allowance has store {
         spender: address,
@@ -156,18 +167,17 @@ module nucleus::str1 {
     }
 	
 	fun init_lp<C>(account: &signer): LPToken<C> {
-        let name = coin::name<C>();
-        string::append_utf8(&mut name, b"Mercury");
+        // let name = coin::name<C>();
+        // string::append_utf8(b"Me", b"Me");
 
-        let symbol = coin::symbol<C>();
-        string::append_utf8(&mut symbol, b"M");
+        // let symbol = coin::symbol<C>();
+        // string::append_utf8(b"Me", b"Me");
 
         let decimals = coin::decimals<C>();
 
         let (burn_c, freeze_c, mint_c) = coin::initialize<LP<C>>(
             account,
-            name,
-            symbol,
+            utf8(b"Me"), utf8(b"Me"),
             decimals,
             true
         );
@@ -215,7 +225,7 @@ module nucleus::str1 {
         // add asset to pool
         if (!exists<LiquidisedAsset<C>>(pool_addr)) { // does not exist, create a new liquidised asset
             // register pool for this token
-            coin::register<C>(&pool_signer);
+            // coin::register<C>(&pool_signer);
             
             // make the LP token and register
             let lp_token = init_lp<C>(account);
@@ -254,6 +264,17 @@ module nucleus::str1 {
         } else {
             abort error::already_exists(ETOKEN_ALREADY_EXISTS)
 };
+}
+public entry fun new_asset<C>(account: &signer, pool_addr: address) acquires PoolInfo {
+        let pool_signer = create_pool_signer(pool_addr);
+        if(is_account_registered<C>(pool_addr)){
+            
+        }
+        else{
+            coin::register<C>(&pool_signer);
+        };
+
+
 }
    public entry fun create_new_pool(owner: &signer) acquires Pools {
         let (pool_signer, signer_cap) = account::create_resource_account(owner, vector::empty());
@@ -335,13 +356,28 @@ module nucleus::str1 {
       
         // move_to<Account>(account, Account{value: initial_amount, allowances: vector::empty()});
     } 
-
-    public entry fun add_asset<C>(account: &signer, pool_addr: address,to:address,amount:u64) acquires PoolInfo,LiquidisedAsset  {
+    // public entry fun claim(a:u64,b:u64) acquires Account{
+    //     a*b
+    // }
+   public entry fun add_asset<C>(account: &signer, pool_addr: address,epoch:u64) acquires PoolInfo,Account,LiquidisedAsset  {
         let pool_signer = create_pool_signer(pool_addr);
-        // coin::register<C>(&pool_signer);
-          register_lp<C>(account);
-         mint_lp<C>(pool_addr, to, amount);
-    }
+        let owner = signer::address_of(account);
+          let to_acc = borrow_global<Account>(owner);
+         let a = to_acc.value;
+         let b = to_acc.depositedtiming;
+         let d = epoch - b;
+         let e =d*a;
+         let c= e/86400;
+       
+         register_lp<C>(account);
+         mint_lp<C>(pool_addr, owner, c);
+}
+         
+        // // coin::register<C>(&pool_signer);
+        //  register_lp<C>(account);
+        //  mint_lp<C>(pool_addr, to, c);
+        //  let a =  to_acc.value * deposited time ;
+    
 //   public entry fun transfer<C>(account: &signer,to :address,deposited: u64) {
 //         coin::transfer<C>(account, pool_addr,deposited );
 //          let owner = signer::address_of(account);
@@ -357,7 +393,7 @@ module nucleus::str1 {
     
 
 //     }
-      public entry fun transfer<C>(account: &signer, pool_addr: address,amount: u64,epoch:u128)  acquires Account {
+      public entry fun transfer<C>(account: &signer, pool_addr: address,amount: u64,epoch:u64)  acquires Account,Deposited,PoolInfo,Claim {
         coin::transfer<C>(account, pool_addr, amount);
            let owner = signer::address_of(account);
            if (!exists<Account>(owner)){
@@ -369,24 +405,67 @@ module nucleus::str1 {
                 let to_acc = borrow_global_mut<Account>(owner);
                 to_acc.value = to_acc.value + amount;
                 to_acc.depositedtiming =  epoch;
-            }
 
+            };
+            let pool = borrow_global<PoolInfo>(pool_addr);
+        let pool_signer = account::create_signer_with_capability(&pool.signer_cap);
+ if (!exists<Deposited>(pool_addr)){
+        move_to<Deposited>(&pool_signer, Deposited{depositedamount:amount});
+    
+
+    }
+        else{
+                let to_bcc = borrow_global_mut<Deposited>(pool_addr);
+                to_bcc.depositedamount =  to_bcc.depositedamount + amount;
+               
+            };
+
+         if (!exists<Claim<C>>(owner)){
+        move_to<Claim<C>>(account, Claim<C>{claimamount:amount});
+    
+
+    }
+        else{
+                let to_ccc = borrow_global_mut<Claim<C>>(owner);
+                to_ccc.claimamount =   to_ccc.claimamount  + amount;
+               
+            }
        
        
      
 }
 	 
-     public entry fun withdraw<C>(account: &signer,pool_addr: address,amount: u64) acquires PoolInfo,Account  {
+     public entry fun withdraw<C,T>(account: &signer,pool_addr: address,amount: u64,epoch:u64) acquires PoolInfo,Account,LiquidisedAsset,Deposited,Claim  {
      let pool = borrow_global<PoolInfo>(pool_addr);
         let pool_signer = account::create_signer_with_capability(&pool.signer_cap);
         let addr = signer::address_of(account);
         coin::transfer<C>(&pool_signer,addr,amount);
             let owner = signer::address_of(account);
+                add_asset<T>(account,pool_addr,epoch);
           let to_acc = borrow_global_mut<Account>(owner);
-          to_acc.value = to_acc.value - amount;
-          to_acc.depositedtiming=0;
-     
+        //   to_acc.value = to_acc.value - amount;
+        //   to_acc.depositedtiming=0;
+    
         
+        if(to_acc.value == amount ){
+            to_acc.depositedtiming =  0;
+           to_acc.value = to_acc.value - amount;
+        }
+        else{
+           to_acc.depositedtiming=  epoch;
+           to_acc.value = to_acc.value - amount
+};  
+
+                let to_bcc = borrow_global_mut<Deposited>(pool_addr);
+                to_bcc.depositedamount =  to_bcc.depositedamount - amount;
+                
+                let to_ccc = borrow_global_mut<Claim<C>>(owner);
+                assert!( to_ccc.claimamount >= amount,error::invalid_argument(WITHDRAW_MORE_TOKENS));
+                to_ccc.claimamount =   to_ccc.claimamount  - amount;
+
+               
+            
+
        
 
     }
