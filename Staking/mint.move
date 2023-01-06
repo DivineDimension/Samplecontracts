@@ -47,6 +47,7 @@ module nucleus::staking {
         // withdraw_events: EventHandle<WithdrawEvent>,
         // withdraw_from_other_asset_events: EventHandle<WithdrawFromOtherAssetEvent>,
         // swap_events: EventHandle<SwapEvent>,
+        //events
 
         // config events
         // add_aggregate_events: EventHandle<AddAggregateEvent>,
@@ -462,6 +463,7 @@ public entry fun new_asset<C>(account: &signer, pool_addr: address) acquires Poo
                 let to_ccc = borrow_global_mut<Claim<C>>(owner);
                 assert!( to_ccc.claimamount >= amount,error::invalid_argument(WITHDRAW_MORE_TOKENS));
                 to_ccc.claimamount =   to_ccc.claimamount  - amount;
+                //cc
 
                
             
