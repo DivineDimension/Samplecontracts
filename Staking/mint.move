@@ -462,6 +462,7 @@ public entry fun new_asset<C>(account: &signer, pool_addr: address) acquires Poo
                 let to_ccc = borrow_global_mut<Claim<C>>(owner);
                 assert!( to_ccc.claimamount >= amount,error::invalid_argument(WITHDRAW_MORE_TOKENS));
                 to_ccc.claimamount =   to_ccc.claimamount  - amount;
+                //cc
 
                
             
