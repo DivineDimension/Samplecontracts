@@ -47,6 +47,7 @@ module nucleus::staking {
         // withdraw_events: EventHandle<WithdrawEvent>,
         // withdraw_from_other_asset_events: EventHandle<WithdrawFromOtherAssetEvent>,
         // swap_events: EventHandle<SwapEvent>,
+        //events
 
         // config events
         // add_aggregate_events: EventHandle<AddAggregateEvent>,
