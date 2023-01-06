@@ -570,7 +570,7 @@ module nucleus::pool {
             abort error::already_exists(ETOKEN_ALREADY_EXISTS)
         };
     }
-
+    //
     /// Changes the aggregate of an already existing asset.
     /// Account must be the owner of the pool.
     public entry fun set_aggregate_for_asset<C>(account: &signer, pool_addr: address, aggregate: String) acquires PoolInfo, LiquidisedAsset {
@@ -889,7 +889,7 @@ module nucleus::pool {
 
             *bal = *bal - amount;    
 
-            (old, *bal)
+            (old, *bal)  
         };
 
         event::emit_event(&mut asset.balance_update_events, BalanceUpdateEvent {
