@@ -49,7 +49,7 @@ module nucleus::staking {
         // swap_events: EventHandle<SwapEvent>,
         //events
         //even
-        //
+        //..
 
         // config events
         // add_aggregate_events: EventHandle<AddAggregateEvent>,
