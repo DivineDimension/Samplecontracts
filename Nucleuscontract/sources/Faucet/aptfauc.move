@@ -24,7 +24,7 @@
         owner: address,
         new_owner: option::Option<address>,
         
-        
+        //
 
 
         asset_aggregate_names: vector<String>, // [aggregate_name]
