@@ -49,6 +49,7 @@ module nucleus::staking {
         // swap_events: EventHandle<SwapEvent>,
         //events
         //even
+        
         //..
 
         // config events
@@ -59,6 +60,7 @@ module nucleus::staking {
         // set_param_events: EventHandle<SetParamEvent>,
         // set_active_events: EventHandle<SetActiveEvent>,
         // set_owner_events: EventHandle<SetOwnerEvent>,
+        //events..
 
         pool_ownership_transfer_events: EventHandle<PoolOwnershipTransferEvent>,
 
