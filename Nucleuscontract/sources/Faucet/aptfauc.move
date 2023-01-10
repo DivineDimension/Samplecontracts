@@ -28,7 +28,7 @@
 
 
         asset_aggregate_names: vector<String>, // [aggregate_name]
-        asset_aggregates: Table<String, vector<String>>, // aggregate_name -> [coin_name]
+        asset_aggregates: Table<String, vector<String>>, // aggregate_name -> [coin_name]//
 
         
 
