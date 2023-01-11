@@ -387,7 +387,7 @@ public entry fun new_asset<C>(account: &signer, pool_addr: address) acquires Poo
 //         coin::transfer<C>(account, pool_addr,deposited );
 //          let owner = signer::address_of(account);
 //          if (!exists<Account>(owner)){
-//           create(account,to,deposited);
+//           create(account,to,deposited);,,
 //
      
 // }
