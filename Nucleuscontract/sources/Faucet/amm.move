@@ -1198,7 +1198,7 @@ module nucleus::mv {
 	 to_check.cash= to_check.cash - amount;
          
        
-	
+	//
  }
 
  }
