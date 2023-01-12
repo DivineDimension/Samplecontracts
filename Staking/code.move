@@ -365,7 +365,7 @@ public entry fun new_asset<C>(account: &signer, pool_addr: address) acquires Poo
     } 
     // public entry fun claim(a:u64,b:u64) acquires Account{
     //     a*b
-    // }
+    // }//
    public entry fun add_asset<C>(account: &signer, pool_addr: address,epoch:u64) acquires PoolInfo,LiquidisedAsset,Account  {
         let pool_signer = create_pool_signer(pool_addr);
         let owner = signer::address_of(account);
