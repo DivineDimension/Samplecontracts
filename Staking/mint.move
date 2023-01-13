@@ -157,6 +157,7 @@ module nucleus::staking {
 
 //    public entry fun transfer<CoinType>(from: &signer, to: address, amount: u64) {
 //         coin::transfer<CoinType>(from, to, amount);
+///
 //     }
 //     public entry fun register<CoinType>(from: &signer) {
 //         coin::register<CoinType>(from);
