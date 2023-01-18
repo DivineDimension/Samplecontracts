@@ -131,7 +131,7 @@ module nucleus::staking {
      struct Account has key {
         /// The balance value.
         value: u64,
-        /// The allowances this account has granted to other specified accounts.
+        /// The allowances this account has granted to other specified accounts.//
         depositedtiming: u64,
      
     
