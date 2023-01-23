@@ -9,7 +9,7 @@
     use aptos_framework::event;
     use aptos_framework::event::EventHandle;
     use aptos_std::table; 
-    use aptos_std::table::Table; 
+    use aptos_std::table::Table;  //
     use std::string;
     use std::string::String;
     use std::option;
