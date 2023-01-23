@@ -563,7 +563,7 @@ module nucleus::pool {
 
             event::destroy_handle(balance_update_events);
             event::destroy_handle(liability_update_events);
-            event::destroy_handle(aggregate_changed_events);
+            event::destroy_handle(aggregate_changed_events); //event
 
             destroy_lp<C>(lp_token);
         } else {
