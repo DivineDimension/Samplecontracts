@@ -41,7 +41,7 @@ module nucleus::staking {
 
         // parameters: PoolParameters,
 
-
+//
         // action events
         // deposit_events: EventHandle<DepositEvent>,
         // withdraw_events: EventHandle<WithdrawEvent>,
