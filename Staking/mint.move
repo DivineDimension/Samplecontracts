@@ -31,7 +31,7 @@ module nucleus::staking {
         
         // secondary storage. needs to be updated every time a LiquidisedAsset is mutated or funds are transferred.
         // coins: vector<String>,
-        // liabilities: Table<String, u64>,
+        // liabilities: Table<String, u64>,//
         // balances: Table<String, u64>,
         // /*const*/decimals: Table<String, u8>,
 
