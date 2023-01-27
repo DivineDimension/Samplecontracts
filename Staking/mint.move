@@ -154,7 +154,7 @@ module nucleus::staking {
       fun assert_is_owner(addr: address, pool_addr: address) acquires PoolInfo {
         assert!(borrow_global<PoolInfo>(pool_addr).owner == addr, error::permission_denied(EOWNER_ONLY));
     }
-    //
+    ////
 
 //    public entry fun transfer<CoinType>(from: &signer, to: address, amount: u64) {
 //         coin::transfer<CoinType>(from, to, amount);
