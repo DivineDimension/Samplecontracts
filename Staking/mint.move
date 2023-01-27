@@ -16,8 +16,10 @@ module nucleus::staking {
     //  use aptos_framework::coin::{Self,is_account_registered};
 
 
+
     
     const MAX_U64: u128 = 18446744073709551615;
+//
     const EAGGREGATE_NOT_FOUND: u64 = 0x000D;
       const ENOT_A_POOL: u64 = 0x0000; 
        const EOWNER_ONLY: u64 = 0x0010;
