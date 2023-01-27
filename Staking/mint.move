@@ -15,7 +15,7 @@ module nucleus::staking {
      use std::string::utf8;
     //  use aptos_framework::coin::{Self,is_account_registered};
 
-
+//
     
     const MAX_U64: u128 = 18446744073709551615;
     const EAGGREGATE_NOT_FOUND: u64 = 0x000D;
