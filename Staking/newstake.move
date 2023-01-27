@@ -23,6 +23,9 @@ module nucleus::staking {
        const EOWNER_ONLY: u64 = 0x0010;
          const ETOKEN_ALREADY_EXISTS: u64 = 0x0002;
            const WITHDRAW_MORE_TOKENS: u64 = 0x0003;
+           
+        //  const ETOKEN_ALREADY_EXISTS: u64 = 0x0002;
+        //    const WITHDRAW_MORE_TOKENS: u64 = 0x0003;
 
         struct PoolInfo has key {
         active: bool,
